@@ -8,6 +8,7 @@ import fr.Alphart.BAT.BAT;
 import net.cubespace.Yamler.Config.Config;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.PluginManager;
 
 public class Trigger extends Config {
@@ -23,7 +24,7 @@ public class Trigger extends Config {
 
 	public Trigger() {}
 
-	public void onTrigger(final String pName, final String reason) {
+	public void onTrigger(final CommandSender sender, final String pName, final String reason) {
 		final PluginManager pm = ProxyServer.getInstance().getPluginManager();
 		final CommandSender console = ProxyServer.getInstance().getConsole();
 		long delay = 100;
@@ -31,7 +32,10 @@ public class Trigger extends Config {
 			ProxyServer.getInstance().getScheduler().schedule(BAT.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					pm.dispatchCommand(console, command.replace("{player}", pName).replace("{reason}", reason));
+					if (command.startsWith("s:") && sender instanceof ProxiedPlayer)
+						((ProxiedPlayer) sender).chat("/" + command.substring(2).replace("{player}", pName).replace("{reason}", reason));
+					else
+						pm.dispatchCommand(console, command.replace("{player}", pName).replace("{reason}", reason));
 				}
 			}, delay, TimeUnit.MILLISECONDS);
 			delay += 500;

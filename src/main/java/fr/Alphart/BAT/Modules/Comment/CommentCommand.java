@@ -53,7 +53,7 @@ public class CommentCommand extends CommandHandler {
 			}
 
 			checkArgument(comment.hasLastcommentCooledDown(args[0]), _("cooldownUnfinished"));
-			comment.insertComment(args[0], Utils.getFinalArg(args, 1), Type.NOTE, sender.getName());
+			comment.insertComment(sender, args[0], Utils.getFinalArg(args, 1), Type.NOTE);
 			sender.sendMessage(__("commentAdded"));
 		}
 	}
@@ -89,7 +89,7 @@ public class CommentCommand extends CommandHandler {
 			if (sender instanceof ProxiedPlayer)
 				checkArgument(PermissionManager.canExecuteAction(Action.WARN, sender, ((ProxiedPlayer) sender).getServer().getInfo().getName()), _("noPerm"));
 			checkArgument(comment.hasLastcommentCooledDown(args[0]), _("cooldownUnfinished"));
-			comment.insertComment(args[0], reason, Type.WARNING, sender.getName());
+			comment.insertComment(sender, args[0], reason, Type.WARNING);
 			if (target != null)
 				target.sendMessage(__("wasWarnedNotif", new String[] { reason }));
 

@@ -27,6 +27,7 @@ import fr.Alphart.BAT.database.DataSourceHandler;
 import fr.Alphart.BAT.database.SQLQueries;
 import lombok.Getter;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -146,7 +147,7 @@ public class Comment implements IModule {
 	}
 
 	/** Get the notes relative to an entity
-	 * 
+	 *
 	 * @param entity
 	 *            | can be an ip or a player name
 	 * @return */
@@ -205,14 +206,14 @@ public class Comment implements IModule {
 		return notes;
 	}
 
-	public void insertComment(final String entity, final String comment, final Type type, final String author) {
+	public void insertComment(final CommandSender sender, final String entity, final String comment, final Type type) {
 		PreparedStatement statement = null;
 		try (Connection conn = BAT.getConnection()) {
 			statement = conn.prepareStatement(SQLQueries.Comments.insertEntry);
 			statement.setString(1, Utils.validIP(entity) ? entity : Core.getUUID(entity));
 			statement.setString(2, comment);
 			statement.setString(3, type.name());
-			statement.setString(4, author);
+			statement.setString(4, sender.getName());
 			statement.executeUpdate();
 			statement.close();
 
@@ -230,7 +231,7 @@ public class Comment implements IModule {
 							if (rs.next()) {
 								int count = rs.getInt("COUNT(*)");
 								if (trigger.getTriggerNumber() == count) {
-									trigger.onTrigger(entity, comment);
+									trigger.onTrigger(sender, entity, comment);
 									break;
 								}
 							}
@@ -248,7 +249,7 @@ public class Comment implements IModule {
 	}
 
 	/** Clear all the comments and warning of an entity or the specified one
-	 * 
+	 *
 	 * @param entity
 	 * @param commentID
 	 *            | use -1 to remove all the comments
