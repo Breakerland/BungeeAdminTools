@@ -220,7 +220,7 @@ public class Comment implements IModule {
 			// Handle the trigger system
 			for (final Trigger trigger : config.getTriggers().values())
 				for (final String pattern : trigger.getPattern())
-					if (pattern.isEmpty() || comment.contains(pattern)) {
+					if (pattern.isEmpty() || comment.toLowerCase().contains(pattern.toLowerCase())) {
 						statement = conn.prepareStatement(pattern.isEmpty() ? SQLQueries.Comments.simpleTriggerCheck : SQLQueries.Comments.patternTriggerCheck);
 						statement.setString(1, Core.getUUID(entity));
 						if (!pattern.isEmpty())
